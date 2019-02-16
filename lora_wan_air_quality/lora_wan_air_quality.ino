@@ -1,11 +1,6 @@
 #include "lmic.h"
 #include "hal/hal.h"
 
-<<<<<<< HEAD
-#include <lmic.h>
-#include <hal/hal.h>
-#include <SPI.h>
-=======
 // LoRaWAN NwkSKey, network session key
 // This is the default Semtech key, which is used by the early prototype TTN
 // network.
@@ -117,7 +112,6 @@ void do_send(osjob_t* j){
     }
     // Next TX is scheduled after TX_COMPLETE event.
 }
->>>>>>> b010fc9cdfa1bfe2b5f08a9aba6ac435c81ea141
 
 void setup() {
     Serial.begin(115200);
@@ -197,18 +191,10 @@ void setup() {
 }
 
 void loop() {
-<<<<<<< HEAD
-  digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(100);              // wait for a second
-  digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
-  delay(100);              // wait for a second
-  
-  Serial.println("Hello world!");
-=======
+    Serial.println("Hello world!");
     os_runloop_once();
     digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
     delay(500);              // wait for a second
     digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
     delay(500);              // wait for a second
->>>>>>> b010fc9cdfa1bfe2b5f08a9aba6ac435c81ea141
 }
