@@ -191,6 +191,7 @@ void setup() {
 }
 
 void loop() {
+    Serial.println("Hello world!");
     os_runloop_once();
     digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
     delay(500);              // wait for a second
