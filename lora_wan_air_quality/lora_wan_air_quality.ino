@@ -114,8 +114,8 @@ void do_send(osjob_t* j){
 }
 
 void setup() {
+    delay(2500);
     Serial.begin(115200);
-    delay(15000);
     Serial.println(F("Starting"));
 
     #ifdef VCC_ENABLE
@@ -191,6 +191,7 @@ void setup() {
 }
 
 void loop() {
+    Serial.println("Hello world!");
     os_runloop_once();
     digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
     delay(500);              // wait for a second
