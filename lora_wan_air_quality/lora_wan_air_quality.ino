@@ -147,12 +147,5 @@ void loop() {
     delay(500);              // wait for a second
     digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
     delay(500);              // wait for a second
-<<<<<<< HEAD
-
     sendSingleMessage(mydata);
-=======
-  */
-
-  getInputFromSerial();
->>>>>>> 3d566da748baa4b6a9d201ceb32eed593c78fdd3
 }
