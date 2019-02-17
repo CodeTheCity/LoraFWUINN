@@ -5,15 +5,15 @@
 // LoRaWAN NwkSKey, network session key
 // This is the default Semtech key, which is used by the early prototype TTN
 // network.
-static const PROGMEM u1_t NWKSKEY[16] = { 0xDC, 0xA7, 0x1E, 0x56, 0x3A, 0xCD, 0x69, 0xD2, 0x9C, 0xC1, 0xEB, 0x9F, 0x9A, 0x73, 0xFD, 0x06 };
+static const PROGMEM u1_t NWKSKEY[16] = { 0xE0, 0xC8, 0xDC, 0x6E, 0x2E, 0xAA, 0xD7, 0xF7, 0xB3, 0x17, 0x1C, 0x57, 0x54, 0xE0, 0xEE, 0x41 };
 
 // LoRaWAN AppSKey, application session key
 // This is the default Semtech key, which is used by the early prototype TTN
 // network.
-static const u1_t PROGMEM APPSKEY[16] = { 0x46, 0xC0, 0x76, 0xC1, 0xE8, 0x4B, 0x05, 0xC1, 0x3E, 0xBB, 0xEE, 0x22, 0xD4, 0xD9, 0xAD, 0xA1 };
+static const u1_t PROGMEM APPSKEY[16] = { 0x38, 0x0D, 0x62, 0x0B, 0xC1, 0x9F, 0x53, 0x2F, 0x0A, 0xF0, 0x12, 0x1C, 0x04, 0xB1, 0x5E, 0x5E };
 
 // LoRaWAN end-device address (DevAddr)
-static const u4_t DEVADDR = 0x26011E52 ; // <-- Change this address for every node!
+static const u4_t DEVADDR = 0x26011AAA ; // <-- Change this address for every node!
 
 // These callbacks are only used in over-the-air activation, so they are
 // left empty here (we cannot leave them out completely unless
@@ -22,7 +22,7 @@ void os_getArtEui (u1_t* buf) { }
 void os_getDevEui (u1_t* buf) { }
 void os_getDevKey (u1_t* buf) { }
 
-static uint8_t mydata[] = "Hello, worldy!";
+static uint8_t mydata[] = "Hello, OHNO!";
 
 // Schedule TX every this many seconds (might become longer due to duty
 // cycle limitations).
@@ -42,8 +42,68 @@ void onEvent (ev_t ev) {
   Serial.print(" EVENT");
 }
 
+SoftwareSerial mySerial(10,11);
+
+void sendSingleMessage(uint8_t msg[]) {
+  // Reset the MAC state. Session and pending data transfers will be discarded.
+  LMIC_reset();
+
+  // On AVR, these values are stored in flash and only copied to RAM
+  // once. Copy them to a temporary buffer here, LMIC_setSession will
+  // copy them into a buffer of its own again.
+  uint8_t appskey[sizeof(APPSKEY)];
+  uint8_t nwkskey[sizeof(NWKSKEY)];
+  memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
+  memcpy_P(nwkskey, NWKSKEY, sizeof(NWKSKEY));
+  LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
+
+  // Disable link check validation
+  LMIC_setLinkCheckMode(0);
+
+  // TTN uses SF9 for its RX2 window.
+  LMIC.dn2Dr = DR_SF9;
+
+  // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
+  LMIC_setDrTxpow(DR_SF7, 14);
+
+  // Check if there is not a current TX/RX job running
+  if (LMIC.opmode & OP_TXRXPEND) {
+    Serial.println(F("OP_TXRXPEND, not sending"));
+  } else {
+    // Prepare upstream data transmission at the next possible time.
+    LMIC_setTxData2(1, msg, strlen(msg), 0);
+    Serial.println(F("Packet queued"));
+  }
+  // Next TX is scheduled after TX_COMPLETE event.
+}
+
+static int head = 0;
+static uint8_t buffer[51];
+
+void flashLED() {
+  digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(100);              // wait for a second
+  digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
+  delay(100);              // wait for a second
+}
+
+void getInputFromSerial() {
+  while (mySerial.available()) {
+    buffer[head++] = mySerial.read();
+    if (head > 50 || buffer[head-1] == 4) {
+      buffer[head-1] = 0;
+      uint8_t message[51];
+      strcpy(message, buffer);
+      sendSingleMessage(message);
+      head = 0;
+      flashLED();
+    }
+  }
+}
+
 void setup() {
   delay(3000);
+  mySerial.begin(9600);
   Serial.begin(115200);
   Serial.println(F("Starting"));
 
@@ -109,57 +169,6 @@ void setup() {
   LMIC_setDrTxpow(DR_SF7, 14);
 }
 
-void sendSingleMessage(uint8_t msg[]) {
-  // Reset the MAC state. Session and pending data transfers will be discarded.
-  LMIC_reset();
-
-  // On AVR, these values are stored in flash and only copied to RAM
-  // once. Copy them to a temporary buffer here, LMIC_setSession will
-  // copy them into a buffer of its own again.
-  uint8_t appskey[sizeof(APPSKEY)];
-  uint8_t nwkskey[sizeof(NWKSKEY)];
-  memcpy_P(appskey, APPSKEY, sizeof(APPSKEY));
-  memcpy_P(nwkskey, NWKSKEY, sizeof(NWKSKEY));
-  LMIC_setSession (0x1, DEVADDR, nwkskey, appskey);
-
-  // Disable link check validation
-  LMIC_setLinkCheckMode(0);
-
-  // TTN uses SF9 for its RX2 window.
-  LMIC.dn2Dr = DR_SF9;
-
-  // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
-  LMIC_setDrTxpow(DR_SF7, 14);
-
-  // Check if there is not a current TX/RX job running
-  if (LMIC.opmode & OP_TXRXPEND) {
-    Serial.println(F("OP_TXRXPEND, not sending"));
-  } else {
-    // Prepare upstream data transmission at the next possible time.
-    LMIC_setTxData2(1, msg, strlen(msg), 0);
-    Serial.println(F("Packet queued"));
-  }
-  // Next TX is scheduled after TX_COMPLETE event.
-}
-
-SoftwareSerial mySerial(10,11);
-
-void getInputFromSerial() {
-  int index = 0;
-
-  while (mySerial.available()) {
-    mydata[index++] = mySerial.read();
-  }
-  if (index > 0) {
-    sendSingleMessage(mydata);
-  }
-}
-
-
 void loop() {
-  digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(500);              // wait for a second
-  digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
-  delay(500);              // wait for a second
   getInputFromSerial();
 }
