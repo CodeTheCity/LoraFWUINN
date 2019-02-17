@@ -12,3 +12,15 @@
   * Kit should send message to LoRa chip
   * LoRa chip broadcasts message and confirms broadcasting message
 * Max message length is 51 bytes
+
+# Sunday, 17.2.19
+* SoftwareSerial does not work reliably at high baud rates
+* digitalWrite is only able to send HIGH and LOW messages (representing voltage levels), can e.g. be used for interrupts
+* To-Do List for today:
+  * Be able to receive ANY message from ANY device on the Lora32u4 via a serial pin
+  * esp8266 must be able to send ANY message from a serial pin
+  * Lora32u4 should be able to receive ANY message from esp8266
+  * esp8266 must be able to send its air sensor payload via a serial pin
+  * Lora32u4 must be able to split esp8266 air sensor payload into 51-byte sized packets
+  * Lora32u4 must define a protocol for sending packets via Lora
+  * Lora32u4 must be able to send messages via LoRa when fed with data from esp8266
