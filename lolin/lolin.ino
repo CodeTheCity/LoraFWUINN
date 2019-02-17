@@ -1,13 +1,12 @@
-#include "SoftwareSerial.h";
-
-SoftwareSerial mySerial(7, 8);
-
 void setup() {
-  mySerial.begin(115200);
-  Serial.begin(115200);
+  Serial.begin(9600);
+  pinMode(2, OUTPUT);
 }
 
 void loop() {
-  mySerial.println("This is a top secret message");
+  digitalWrite(2, HIGH);
+  Serial.println("This is a top secret message");
+  delay(1000);
+  digitalWrite(2, LOW);
   delay(1000);
 }

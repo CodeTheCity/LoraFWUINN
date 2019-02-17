@@ -30,10 +30,10 @@ const unsigned TX_INTERVAL = 60;
 
 // Pin mapping
 const lmic_pinmap lmic_pins = {
-    .nss = 8,
-    .rxtx = LMIC_UNUSED_PIN,
-    .rst = 4,
-    .dio = {7, 6, LMIC_UNUSED_PIN},
+  .nss = 8,
+  .rxtx = LMIC_UNUSED_PIN,
+  .rst = 4,
+  .dio = {7, 6, LMIC_UNUSED_PIN},
 };
 
 // TODO: Do we need to handle any network events?
@@ -147,6 +147,12 @@ void loop() {
     delay(500);              // wait for a second
     digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
     delay(500);              // wait for a second
+<<<<<<< HEAD
 
     sendSingleMessage(mydata);
+=======
+  */
+
+  getInputFromSerial();
+>>>>>>> 3d566da748baa4b6a9d201ceb32eed593c78fdd3
 }
