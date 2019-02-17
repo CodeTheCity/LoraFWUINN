@@ -30,3 +30,10 @@
   * Aggregates data in variable data which is sent in one message (contrary to Luftdaten service) to Madavi, opensensemap, custom influx db, csv, etc.
   * IMPORTANT: send_lora function is already implemented - triggered via send2lora variable (sends the aggregated data pack) --> modify this
   * send_lora function - line 1789 to 1863
+
+* To-Do for next time:
+  * BIG: Incorporate our code into the Lolin chip
+  * Reintegrate sensor with the Lolin
+  * Fetch data from sensor on Lolin
+  * Parse data into 51 byte packet format
+  * Send data packets to Lora32u4
