@@ -1,9 +1,9 @@
 class Context
-  attr_reader :headers, :request, :ip, :path;
+  attr_reader :headers, :request, :ip, :path, :body;
 
   def send(body, status=200)
-    header(status);
-    body(body);
+    send_header(status);
+    send_body(body);
   end
 
   def close
@@ -12,12 +12,20 @@ class Context
 
   private
 
-  def header(status="200 OK")
+  def send_header(status="200 OK")
     @socket.print("HTTP/1.1 #{status}\r\n\r\n");
   end
 
-  def body(body="")
+  def send_body(body="")
     @socket.print("#{body}\r\n");
+  end
+
+  def read_body(socket)
+    recv_bytes = @headers['content-length'];
+    return if recv_bytes.nil?;
+    recv_bytes = recv_bytes.to_i;
+    raise "Message size too large (#{recv_bytes})." if recv_bytes > 1e6; # Max 1MB message size.
+    @body = socket.read(recv_bytes);
   end
 
   def read_headers(socket)
@@ -38,6 +46,7 @@ class Context
     @socket = socket;
     @request = socket.gets.strip;
     @headers = read_headers(socket);
+    @body = read_body(socket);
 
     @path = @request.split(' ')[1];
 

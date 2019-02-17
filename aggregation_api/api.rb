@@ -9,5 +9,6 @@ $host = 'localhost';
 $port = 9000;
 
 server = Server.new($host, $port){ |context|
+  puts "Request from: #{context.ip} body: #{context.body}";
   context.send("Hello world");
 };
