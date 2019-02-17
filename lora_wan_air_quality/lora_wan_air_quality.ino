@@ -91,8 +91,11 @@ void getInputFromSerial() {
   while (mySerial.available()) {
     buffer[head++] = mySerial.read();
     if (head > 50 || buffer[head-1] == 4) {
+      buffer[head-1] = 0;
+      uint8_t message[51];
+      strcpy(message, buffer);
+      sendSingleMessage(message);
       head = 0;
-      sendSingleMessage(buffer);
       flashLED();
     }
   }
