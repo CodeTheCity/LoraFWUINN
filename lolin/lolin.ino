@@ -1,11 +1,15 @@
+#include "SoftwareSerial.h"
+
+SoftwareSerial mySerial(16, 0);
+
 void setup() {
-  Serial.begin(9600);
+  mySerial.begin(9600);
   pinMode(2, OUTPUT);
 }
 
 void sendMessageToLoRa(const char string[]) {
-  Serial.write(string);
-  Serial.write("\004");
+  mySerial.write(string);
+  mySerial.write("\004");
 }
 
 void loop() {
