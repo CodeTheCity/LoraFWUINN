@@ -11,3 +11,4 @@
   * Interface with the existing chip in the kit
   * Kit should send message to LoRa chip
   * LoRa chip broadcasts message and confirms broadcasting message
+* Max message length is 51 bytes

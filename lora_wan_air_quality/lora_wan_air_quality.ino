@@ -1,5 +1,6 @@
 #include "lmic.h"
 #include "hal/hal.h"
+#include "SoftwareSerial.h"
 
 // LoRaWAN NwkSKey, network session key
 // This is the default Semtech key, which is used by the early prototype TTN
@@ -21,7 +22,7 @@ void os_getArtEui (u1_t* buf) { }
 void os_getDevEui (u1_t* buf) { }
 void os_getDevKey (u1_t* buf) { }
 
-static uint8_t mydata[] = "Hello, world!";
+static uint8_t mydata[] = "Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lor";
 static osjob_t sendjob;
 
 // Schedule TX every this many seconds (might become longer due to duty
@@ -113,9 +114,25 @@ void do_send(osjob_t* j){
     // Next TX is scheduled after TX_COMPLETE event.
 }
 
+SoftwareSerial mySerial(2, 3);  //RX, TX (latter is never needed)
+
+char getInputFromSerial() {
+  digitalWrite(2, 'c');
+  if(mySerial.available()) {
+    //return mySerial.read();
+    Serial.println(mySerial.read());
+    return NULL;
+  } else {
+    return NULL;
+  }
+}
+
 void setup() {
-    delay(2500);
+    delay(15000);
     Serial.begin(115200);
+    pinMode(2, INPUT);
+    pinMode(3 , OUTPUT);
+    mySerial.begin(115200);
     Serial.println(F("Starting"));
 
     #ifdef VCC_ENABLE
@@ -191,10 +208,13 @@ void setup() {
 }
 
 void loop() {
-    Serial.println("Hello world!");
+    /*Serial.println("Hello world!");
     os_runloop_once();
     digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
     delay(500);              // wait for a second
     digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
     delay(500);              // wait for a second
+    */
+  
+    getInputFromSerial();
 }
