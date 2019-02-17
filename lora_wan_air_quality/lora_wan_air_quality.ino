@@ -142,11 +142,24 @@ void sendSingleMessage(uint8_t msg[]) {
   // Next TX is scheduled after TX_COMPLETE event.
 }
 
-void loop() {
-    digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(500);              // wait for a second
-    digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
-    delay(500);              // wait for a second
+SoftwareSerial mySerial(10,11);
 
+void getInputFromSerial() {
+  int index = 0;
+
+  while (mySerial.available()) {
+    mydata[index++] = mySerial.read();
+  }
+  if (index > 0) {
     sendSingleMessage(mydata);
+  }
+}
+
+
+void loop() {
+  digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(500);              // wait for a second
+  digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
+  delay(500);              // wait for a second
+  getInputFromSerial();
 }
