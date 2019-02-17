@@ -1,0 +1,5 @@
+//First byte: Packet X (first four bits) of total packet Y (last four bits)
+splitDataIntoPackets(rawData)
+    yPackets = (sizeof(rawData) % 50)
+    for xPacket = 0 to yPacket
+        set first byte to 
